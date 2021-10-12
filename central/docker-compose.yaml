@@ -1,15 +1,5 @@
-version: "3.8"
+version: "3.9"
 services:
-  db:
-    container_name: central_db_container
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: central
-    ports:
-      - "5432:5432"
   pgadmin:
     container_name: central_pgadmin_container
     image: dpage/pgadmin4
@@ -19,3 +9,34 @@ services:
       PGADMIN_DEFAULT_PASSWORD: root
     ports:
       - "5050:80"
+
+  central:
+    container_name: central_db_container
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: central
+    ports:
+      - "5432:5432"
+    volumes:
+      - central-data:/var/lib/postgresql/data
+
+  rabbitmq:
+    container_name: central_rabbitmq
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=root
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq/
+      - rabbitmq-log:/var/log/rabbitmq
+
+volumes:
+  central-data:
+  rabbitmq-data:
+  rabbitmq-log:
